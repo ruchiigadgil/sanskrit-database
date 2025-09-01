@@ -71,6 +71,23 @@ def register():
     except Exception as e:
         logger.error(f"Error in register: {str(e)}")
         return jsonify({'message': f'Database error: {str(e)}'}), 500
+@app.route('/api/env-check')
+def env_check():
+    import os
+    return {
+        "MONGODB_URI": os.getenv("MONGODB_URI", "NOT SET")
+    }
+
+@app.route('/api/db-test')
+def db_test():
+    try:
+        db = get_db_connection()
+        db.command("ping")
+        return {"status": "success", "message": "Connected to MongoDB Atlas ✅"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}, 500
+
+
 
 @app.route('/api/login', methods=['POST', 'OPTIONS'])
 def login():
